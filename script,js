@@ -1,4 +1,4 @@
-// BasePath para GitHub Pages (ajústalo al nombre exacto del repo)
+// BasePath para GitHub Pages (ajústalo si cambia el nombre del repo)
 const basePath = "/HabitacionesMallorca";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -12,17 +12,13 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
 
     const zone = document.getElementById("zone").value.trim();
-    const maxPrice = document.getElementById("max_price").value.trim();
     const from = document.getElementById("from").value.trim();
-    const billsInc = document.getElementById("bills_included").checked;
-    const privateBath = document.getElementById("private_bath").checked;
+    const stay = document.getElementById("stay").value; // short | long | ""
 
     const p = new URLSearchParams();
     if (zone) p.set("zone", zone);
-    if (maxPrice) p.set("max_price", maxPrice);
     if (from) p.set("from", from);
-    if (billsInc) p.set("bills_included", "1");
-    if (privateBath) p.set("private_bath", "1");
+    if (stay) p.set("stay", stay);
 
     window.location.href = `${basePath}/listings.html${p.toString() ? "?" + p.toString() : ""}`;
   });
