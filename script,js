@@ -23,3 +23,5 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = `${basePath}/listings.html${p.toString() ? "?" + p.toString() : ""}`;
   });
 });
+
+
