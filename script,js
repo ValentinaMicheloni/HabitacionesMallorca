@@ -1,0 +1,274 @@
+// app/page.tsx (o src/app/page.tsx en Next.js 13+ con App Router)
+// Requisitos: TailwindCSS configurado. Opcional: paquete "lucide-react" (iconos)
+// npm i lucide-react
+// Esta landing no tiene backend: el buscador redirige a /listings con querystring
+// y el CTA "Publicar" apunta a /publicar
+
+import React, { useMemo, useState } from "react";
+import { Search, ShieldCheck, Handshake, MapPin, Home, ChevronRight } from "lucide-react";
+
+export default function LandingHabitacionesMallorca() {
+  const [zone, setZone] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [billsInc, setBillsInc] = useState(false);
+  const [privateBath, setPrivateBath] = useState(false);
+
+  const query = useMemo(() => {
+    const p = new URLSearchParams();
+    if (zone) p.set("zone", zone);
+    if (maxPrice) p.set("max_price", maxPrice);
+    if (dateFrom) p.set("from", dateFrom);
+    if (billsInc) p.set("bills_included", "1");
+    if (privateBath) p.set("private_bath", "1");
+    return p.toString();
+  }, [zone, maxPrice, dateFrom, billsInc, privateBath]);
+
+  function handleSearch(e?: React.FormEvent) {
+    e?.preventDefault();
+    const url = "/listings" + (query ? `?${query}` : "");
+    if (typeof window !== "undefined") window.location.href = url;
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white text-slate-800">
+      {/* Header */}
+      <header className="sticky top-0 z-30 bg-white/70 backdrop-blur border-b border-slate-200">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="h-9 w-9 rounded-2xl bg-sky-500 flex items-center justify-center shadow-sm">
+              <Home className="h-5 w-5 text-white" />
+            </div>
+            <span className="font-semibold text-lg tracking-tight">Habitaciones Mallorca</span>
+          </div>
+          <nav className="hidden md:flex items-center gap-6 text-sm">
+            <a href="#como-funciona" className="hover:text-sky-700 transition-colors">Cómo funciona</a>
+            <a href="#seguridad" className="hover:text-sky-700 transition-colors">Seguridad</a>
+            <a href="#faq" className="hover:text-sky-700 transition-colors">FAQ</a>
+          </nav>
+          <div className="flex items-center gap-3">
+            <a href="/publicar" className="inline-flex items-center gap-2 rounded-2xl bg-sky-600 px-4 py-2 text-white text-sm shadow-sm hover:bg-sky-700 transition-colors">
+              Publicar
+              <ChevronRight className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero */}
+      <section className="relative">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+          <div className="grid lg:grid-cols-2 gap-10 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-600 shadow-sm">
+                <ShieldCheck className="h-4 w-4 text-sky-600" />
+                Anuncios verificados · Sin fraudes
+              </div>
+              <h1 className="mt-5 text-4xl sm:text-5xl font-semibold leading-tight tracking-tight">
+                Publica o encuentra <span className="text-sky-700">habitación</span> en Mallorca
+              </h1>
+              <p className="mt-4 text-slate-600 text-base sm:text-lg max-w-prose">
+                Conectamos de forma segura a propietarios e inquilinos. Verificamos identidad y propiedad para que el proceso sea transparente, simple y sin sorpresas.
+              </p>
+
+              {/* Buscador */}
+              <form onSubmit={handleSearch} className="mt-8 rounded-3xl bg-white shadow-sm border border-slate-200 p-4 sm:p-6">
+                <div className="grid md:grid-cols-5 gap-3">
+                  <div className="md:col-span-2">
+                    <label className="block text-xs text-slate-500 mb-1">Zona / Municipio</label>
+                    <div className="relative">
+                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                      <select
+                        value={zone}
+                        onChange={(e) => setZone(e.target.value)}
+                        className="w-full appearance-none rounded-xl border border-slate-300 pl-9 pr-8 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                      >
+                        <option value="">Cualquier zona</option>
+                        <option value="Palma">Palma</option>
+                        <option value="Calvià">Calvià</option>
+                        <option value="Manacor">Manacor</option>
+                        <option value="Inca">Inca</option>
+                        <option value="Sóller">Sóller</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">Precio máx. (€ / mes)</label>
+                    <input
+                      type="number"
+                      min={0}
+                      placeholder="Ej: 650"
+                      value={maxPrice}
+                      onChange={(e) => setMaxPrice(e.target.value)}
+                      className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">Disponible desde</label>
+                    <input
+                      type="date"
+                      value={dateFrom}
+                      onChange={(e) => setDateFrom(e.target.value)}
+                      className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                    />
+                  </div>
+
+                  <div className="flex md:block items-end">
+                    <button
+                      type="submit"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-sky-600 px-4 py-3 text-sm font-medium text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-600"
+                    >
+                      <Search className="h-4 w-4" />
+                      Buscar
+                    </button>
+                  </div>
+                </div>
+
+                <div className="mt-4 grid sm:grid-cols-2 gap-3 text-sm">
+                  <label className="inline-flex items-center gap-2">
+                    <input type="checkbox" checked={billsInc} onChange={(e) => setBillsInc(e.target.checked)} className="h-4 w-4 rounded border-slate-300" />
+                    Gastos incluidos
+                  </label>
+                  <label className="inline-flex items-center gap-2">
+                    <input type="checkbox" checked={privateBath} onChange={(e) => setPrivateBath(e.target.checked)} className="h-4 w-4 rounded border-slate-300" />
+                    Baño privado
+                  </label>
+                </div>
+
+                <div className="mt-3 text-xs text-slate-500">
+                  Consejito: usa filtros para ver solo lo que realmente te sirve y guarda tiempo en visitas.
+                </div>
+              </form>
+
+              <div className="mt-6 flex flex-wrap items-center gap-3 text-xs text-slate-600">
+                <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1">✔️ Verificación de identidad</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1">✔️ Prueba de propiedad</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1">✔️ Mensajería segura</span>
+              </div>
+            </div>
+
+            {/* Lado derecho: tarjeta ilustrativa */}
+            <div>
+              <div className="relative rounded-3xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
+                <div className="rounded-2xl overflow-hidden aspect-[4/3] bg-slate-100" />
+                <div className="mt-4 flex items-center gap-2 text-sky-700 text-sm font-medium">
+                  <ShieldCheck className="h-4 w-4" /> Anuncio verificado
+                </div>
+                <h3 className="mt-2 text-xl font-semibold">Habitación luminosa en Palma Centro</h3>
+                <p className="text-sm text-slate-600 line-clamp-2">
+                  Piso compartido con 3 habitaciones, wifi, calefacción y balcón. Baño compartido, amueblado. Metro y buses a 3 minutos.
+                </p>
+                <div className="mt-3 flex items-center justify-between">
+                  <div className="text-sky-700 font-semibold">€580/mes</div>
+                  <div className="text-sm text-slate-500">Disponible: 15/09</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Cómo funciona */}
+      <section id="como-funciona" className="bg-white border-y border-slate-200">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">¿Cómo lo hacemos?</h2>
+          <p className="mt-2 text-slate-600 max-w-prose">Tres pasos simples para publicar o encontrar tu próxima habitación.</p>
+          <div className="mt-8 grid md:grid-cols-3 gap-6">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center">
+                  <Search className="h-5 w-5 text-sky-700" />
+                </div>
+                <h3 className="font-medium">1) Recopilamos la información</h3>
+              </div>
+              <p className="mt-2 text-sm text-slate-600">Imágenes, detalles, ubicación aproximada, precio, tiempo de alquiler y el perfil buscado.</p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center">
+                  <ShieldCheck className="h-5 w-5 text-sky-700" />
+                </div>
+                <h3 className="font-medium">2) Verificamos la autenticidad</h3>
+              </div>
+              <p className="mt-2 text-sm text-slate-600">Comprobamos que la propiedad exista y validamos identidad para protegerte de fraudes.</p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center">
+                  <Handshake className="h-5 w-5 text-sky-700" />
+                </div>
+                <h3 className="font-medium">3) Conectamos a las partes</h3>
+              </div>
+              <p className="mt-2 text-sm text-slate-600">Mensajería segura y solicitud de visita con horarios para coordinar sin fricción.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Seguridad */}
+      <section id="seguridad">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Seguridad y confianza</h2>
+          <div className="mt-6 grid md:grid-cols-3 gap-6">
+            {[
+              {
+                title: "Verificación de identidad",
+                desc: "Selfie y documento. Los datos no se muestran públicamente.",
+              },
+              {
+                title: "Prueba de propiedad",
+                desc: "Validamos escritura, IBI o autorización del titular antes de publicar.",
+              },
+              {
+                title: "Reportes y moderación",
+                desc: "Botón de reportar en cada anuncio + revisión manual.",
+              },
+            ].map((c, i) => (
+              <div key={i} className="rounded-2xl border border-slate-200 bg-white p-5">
+                <h3 className="font-medium">{c.title}</h3>
+                <p className="mt-1 text-sm text-slate-600">{c.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="bg-slate-50 border-y border-slate-200">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Preguntas frecuentes</h2>
+          <div className="mt-6 space-y-4">
+            <details className="rounded-2xl border border-slate-200 bg-white p-5">
+              <summary className="cursor-pointer font-medium">¿Cobran comisión?</summary>
+              <p className="mt-2 text-sm text-slate-600">En el MVP no intermediamos pagos ni cobramos comisión. Solo conectamos a las partes.</p>
+            </details>
+            <details className="rounded-2xl border border-slate-200 bg-white p-5">
+              <summary className="cursor-pointer font-medium">¿Se muestran mis datos personales?</summary>
+              <p className="mt-2 text-sm text-slate-600">Tu email y teléfono permanecen ocultos hasta que ambas partes aceptan compartirlos.</p>
+            </details>
+            <details className="rounded-2xl border border-slate-200 bg-white p-5">
+              <summary className="cursor-pointer font-medium">¿Puedo publicar si no soy el titular?</summary>
+              <p className="mt-2 text-sm text-slate-600">Sí, siempre que adjuntes una autorización firmada del titular y documento válido.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 text-sm text-slate-600">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <p>© {new Date().getFullYear()} Habitaciones Mallorca. Todos los derechos reservados.</p>
+            <nav className="flex gap-5">
+              <a className="hover:text-sky-700" href="/legal/terminos">Términos</a>
+              <a className="hover:text-sky-700" href="/legal/privacidad">Privacidad</a>
+              <a className="hover:text-sky-700" href="/contacto">Contacto</a>
+            </nav>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
